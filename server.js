@@ -2,8 +2,11 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
-const Db = require('./structure/db.js');
-Db();
+
+const initDb = require('./structure/db.js');
+const process = ( async () => {
+    await initDb();
+})();
 
 app.get('/', function (req, res) {
     res.send('Hello World!');
