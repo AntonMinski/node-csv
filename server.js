@@ -2,15 +2,13 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
-
-const initDb = require('./structure/db.js');
-const process = ( async () => {
-    await initDb();
+const router = require('./structure/product/router.js');
+const db = require('./structure/db.js');
+const initDb = ( async () => {
+    const sequelizeData = await db();
+    app.use('/', router(sequelizeData))
 })();
 
-app.get('/', function (req, res) {
-    res.send('Hello World!');
-});
 app.listen(port, function () {
-    console.log('Example app listening on port 3000!');
+    console.log('Listening on port 3000!');
 });

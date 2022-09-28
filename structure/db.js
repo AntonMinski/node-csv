@@ -11,8 +11,6 @@ const sequelize = new Sequelize(
 );
 
 const initProducts = require('./product/model.js');
-const initProductController = require('./product/controller.js');
-const readStream = require('./product/readStream.js');
 
 module.exports = async () => {
 
@@ -22,14 +20,9 @@ module.exports = async () => {
 
         const products = await initProducts(sequelize, DataTypes);
 
-        readStream(sequelize, products);
-
-        // await initProductController(sequelize, products);
-
+        return {sequelize, products};
     }
     catch (error) {
         console.error('Unable to connect to the database: ', error);
     }
-
-
 };
