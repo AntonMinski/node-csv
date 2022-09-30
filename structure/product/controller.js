@@ -1,29 +1,54 @@
+const myDataSource = require("../db.ts");
+const { Product } = require("../product.entity.ts");
+
+
 const writeData = require('./writeToCsv');
 
-exports.getProducts = function ({sequelize, products}) {
-    return ((req, res) => {
-        products.findAndCountAll().then(result => {
-            res.send({
-                status: 200,
-                data: result.rows.map(item => item.dataValues),
-                count: result.count
-            });
-            }).catch((error) => {
-                console.error('Failed to retrieve data : ', error);
-            });
-    });
+exports.getProducts = async (req, res) => {
+
+    myDataSource
+        .initialize()
+        .then(() => {
+            console.log("Data Source has been initialized!")
+        })
+        .catch((err) => {
+            console.error("Error during Data Source initialization:", err)
+        });
+
+    try {
+        const products = await myDataSource.getRepository(Product).find()
+        res.json(products)
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+        console.log('error fetching Data:', err)
+    }
+
 };
 
-exports.postProductsToDb = (req, res) => {
-    console.log(req)
-    res.send("NOT IMPLEMENTED: postProductsToDb");
+exports.postProductsToDb = async (req, res) => {
+
+    myDataSource
+        .initialize()
+        .then(() => {
+            console.log("Data Source has been initialized!")
+        })
+        .catch((err) => {
+            console.error("Error during Data Source initialization:", err)
+        });
+
+    try {
+        const user = await myDataSource.getRepository(Product).create(req.body)
+        const results = await myDataSource.getRepository(Product).save(user)
+        return res.send(results)
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+        console.log('error saving to DB:', err)
+    }
 };
 
-exports.writeProductsToCsv = function(sequelizeData) {
-    return ((req, res) => {
-        return writeData(sequelizeData, req, res)
-    });
-}
+exports.writeProductsToCsv = (req, res) => {
+    return writeData(0, req, res);
+};
 
 
 

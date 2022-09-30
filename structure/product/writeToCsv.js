@@ -1,3 +1,4 @@
+/*
 const sequelizeStream = require('node-sequelize-stream');
 const { Op } = require("sequelize");
 const fs = require('fs');
@@ -74,3 +75,4 @@ module.exports = ({sequelize, products}, req, res) => {
             res.send('finished writing to csv');
         })
 }
+ */
