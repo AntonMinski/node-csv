@@ -1,5 +1,5 @@
-const myDataSource = require("../db.ts");
-const { Product } = require("../product.entity.ts");
+import { myDataSource } from "../../db"
+import { Product } from "../entity/product.entity";
 
 
 const writeData = require('./writeToCsv');
@@ -27,6 +27,8 @@ exports.getProducts = async (req, res) => {
 
 exports.postProductsToDb = async (req, res) => {
 
+    console.log('1111111111111111111111111111111111111')
+
     myDataSource
         .initialize()
         .then(() => {
@@ -36,9 +38,19 @@ exports.postProductsToDb = async (req, res) => {
             console.error("Error during Data Source initialization:", err)
         });
 
+    console.log(req.body)
+
     try {
-        const user = await myDataSource.getRepository(Product).create(req.body)
-        const results = await myDataSource.getRepository(Product).save(user)
+        const product = await myDataSource.getRepository(Product).create({
+            title: "Dell e5570",
+            class: "office",
+            manufacturer: "Dell",
+            country: "USA",
+            release_year: 2016,
+            price: 8000
+        })
+        console.log('33333333333333333333')
+        const results = await myDataSource.getRepository(product).save(product)
         return res.send(results)
     } catch (err) {
         res.status(500).json({ message: err.message })

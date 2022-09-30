@@ -3,3 +3,5 @@ yarn.lock
 .idea
 README.TXT
 result.csv
+dist
+yarn-error.log

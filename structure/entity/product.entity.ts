@@ -2,9 +2,6 @@ const { Entity, Column, PrimaryGeneratedColumn } = require("typeorm");
 
 @Entity()
 export class Product {
-    @PrimaryGeneratedColumn()
-    id: number
-
     @Column()
     title: string
 
@@ -17,10 +14,9 @@ export class Product {
     @Column()
     country: string
 
-    @Column({type: "year"})
-    release_year: string
+    @Column
+    release_year: number
 
     @Column()
-    price: string
-
+    price: number
 }
