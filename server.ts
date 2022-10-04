@@ -2,6 +2,7 @@ const expressServer = require('express');
 const app = expressServer();
 const port = 3000;
 
+
 const baseRouter = require('./structure/product/router');
 app.use('/', baseRouter)
 

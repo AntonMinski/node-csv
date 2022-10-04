@@ -1,19 +1,23 @@
 import { myDataSource } from "../../db"
 import { Product } from "../entity/product.entity";
-
-
 const writeData = require('./writeToCsv');
 
-exports.getProducts = async (req, res) => {
-
-    myDataSource
+let dataSourceInitialised = false;
+function initDataSources() {
+    return myDataSource
         .initialize()
         .then(() => {
             console.log("Data Source has been initialized!")
+            dataSourceInitialised = true;
         })
         .catch((err) => {
             console.error("Error during Data Source initialization:", err)
         });
+}
+
+exports.getProducts = async (req, res) => {
+
+    if (!dataSourceInitialised) await initDataSources();
 
     try {
         const products = await myDataSource.getRepository(Product).find()
@@ -27,18 +31,7 @@ exports.getProducts = async (req, res) => {
 
 exports.postProductsToDb = async (req, res) => {
 
-    console.log('1111111111111111111111111111111111111')
-
-    myDataSource
-        .initialize()
-        .then(() => {
-            console.log("Data Source has been initialized!")
-        })
-        .catch((err) => {
-            console.error("Error during Data Source initialization:", err)
-        });
-
-    console.log(req.body)
+    if (!dataSourceInitialised) await initDataSources();
 
     try {
         const product = await myDataSource.getRepository(Product).create({
@@ -49,8 +42,7 @@ exports.postProductsToDb = async (req, res) => {
             release_year: 2016,
             price: 8000
         })
-        console.log('33333333333333333333')
-        const results = await myDataSource.getRepository(product).save(product)
+        const results = await myDataSource.getRepository(Product).save(product)
         return res.send(results)
     } catch (err) {
         res.status(500).json({ message: err.message })
@@ -58,8 +50,11 @@ exports.postProductsToDb = async (req, res) => {
     }
 };
 
-exports.writeProductsToCsv = (req, res) => {
-    return writeData(0, req, res);
+exports.writeProductsToCsv = async (req, res) => {
+
+    if (!dataSourceInitialised) await initDataSources();
+
+    return writeData(myDataSource, req, res);
 };
 
 

@@ -1,4 +1,4 @@
-const { DataSource } = require("typeorm");
+import { DataSource } from "typeorm"
 
 
 export const myDataSource = new DataSource({
@@ -8,7 +8,7 @@ export const myDataSource = new DataSource({
     username: "admin",
     password: "1111",
     database: "node_csv",
-    entities: [ `structure/entity/*.js`],
+    entities: [ "structure/entity/*.{js,ts}"],
     logging: true,
     synchronize: true,
 })

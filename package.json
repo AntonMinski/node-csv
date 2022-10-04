@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tsc",
-    "start": "node dist/server.js",
+    "start": "ts-node server.ts",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/server.js\""
   },
   "author": "",
@@ -15,6 +15,7 @@
     "concurrently": "^7.4.0",
     "csv-stringify": "^6.2.0",
     "express": "^4.18.1",
+    "json2csv": "^5.0.7",
     "mysql": "^2.18.1",
     "mysql2": "^2.3.3",
     "node-sequelize-stream": "^1.1.1",
@@ -23,6 +24,7 @@
     "sequelize": "^6.23.1",
     "sequelize-stream": "^1.0.2",
     "through2": "^4.0.2",
+    "ts-node": "^10.9.1",
     "typeorm": "^0.3.10"
   },
   "devDependencies": {
