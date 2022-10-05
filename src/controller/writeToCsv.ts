@@ -1,13 +1,9 @@
-const { createWriteStream } = require('fs');
-const path = require('path');
-const filePath = path.resolve(__dirname, '../..');
-
 const { Product } = require("../entity/product.entity");
 const through2 = require('through2');
 
+
 // CSV MODULE
 const { Transform } = require('json2csv');
-const filename = "result.csv";
 const columns = [
     "id",
     "title",
@@ -20,6 +16,7 @@ const columns = [
 const opts = { columns, header: true };
 const transformOpts = { highWaterMark: 8192, encoding: 'utf-8' };
 const json2csv = new Transform(opts, transformOpts);
+
 
 // DATABASE
 import { myDataSource } from "../../db"
@@ -36,27 +33,15 @@ function initDataSources() {
         });
 }
 
+
 module.exports = async (req, res) => {
-
-    const getDbQuery = require('./getDbQuery');
-    const { dbQuery, dbQueryObject } = getDbQuery(req);
-
     if (!dataSourceInitialised) await initDataSources();
 
-    const writeOutput = createWriteStream(filename, { encoding: 'utf8' });
+    const getDbQuery = require('../misc/getDbQuery');
+    const { dbQuery, dbQueryObject } = getDbQuery(req);
 
-    writeOutput
-        .on('finish', () => {
-            console.log('finish');
-            const options = {
-                root: filePath
-            }
-            res.sendFile(filename, options);
-        })
-        .on('error', (error) => {
-            console.error('Failed to retrieve data :', error)
-            res.send(error);
-        });
+    res.setHeader('Content-disposition', 'attachment; filename=result.csv');
+    res.setHeader('Content-type', 'text/csv');
 
     try {
         const stream = await myDataSource
@@ -66,13 +51,11 @@ module.exports = async (req, res) => {
             .stream()
 
         stream.pipe(through2.obj(function (chunk, _, _c) {
-            console.log('chunk', chunk);
             const result = JSON.stringify(chunk);
-            console.log('result', result);
             this.push(result)
 
             _c();
-        })).pipe(json2csv).pipe(writeOutput)
+        })).pipe(json2csv).pipe(res)
 
         stream
             .on('data', (data) => {
@@ -84,6 +67,7 @@ module.exports = async (req, res) => {
             })
             .on('end', () => {
                 console.log('end');
+                res.status(200).end();
             })
 
     } catch (err) {

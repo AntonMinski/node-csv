@@ -15,6 +15,7 @@ function getDbQuery(req) {
 
     Object.entries(req.query).map(([key, value], index) => {
         dbQuery += index === 0 ? `` : ` AND `;
+
         if (key === 'price') {
             const {signStr, numberStr} = getPriceFilter(value);
             dbQuery += `product.price ${signStr} :price`;
