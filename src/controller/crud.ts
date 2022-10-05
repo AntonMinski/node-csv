@@ -18,7 +18,6 @@ function initDataSources() {
 exports.getProducts = async (req, res) => {
 
     if (!dataSourceInitialised) await initDataSources();
-
     try {
         const products = await myDataSource.getRepository(Product).find()
         res.json(products)
@@ -49,15 +48,6 @@ exports.postProductsToDb = async (req, res) => {
         console.log('error saving to DB:', err)
     }
 };
-
-exports.writeProductsToCsv = async (req, res) => {
-
-    if (!dataSourceInitialised) await initDataSources();
-
-    return writeData(myDataSource, req, res);
-};
-
-
 
 
 // ADD ITEMS

@@ -8,7 +8,7 @@ export const myDataSource = new DataSource({
     username: "admin",
     password: "1111",
     database: "node_csv",
-    entities: [ "structure/entity/*.{js,ts}"],
+    entities: [ "src/entity/*.{js,ts}"],
     logging: true,
     synchronize: true,
 })

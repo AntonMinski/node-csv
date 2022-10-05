@@ -2,6 +2,6 @@ node_modules
 yarn.lock
 .idea
 README.TXT
-structure/product/result.csv
+src/controller/result.csv
 dist
 yarn-error.log

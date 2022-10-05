@@ -2,9 +2,10 @@ const expressServer = require('express');
 const app = expressServer();
 const port = 3000;
 
+global.dataSourceInitialised = false;
 
-const baseRouter = require('./structure/product/router');
-app.use('/', baseRouter)
+const rotes = require('./router');
+app.use('/', rotes)
 
 
 app.listen(port, function () {
