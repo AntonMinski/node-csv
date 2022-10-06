@@ -1,6 +1,8 @@
-import { myDataSource } from "../../db"
-import { Product } from "../entity/product.entity";
-const writeData = require('./writeToCsv');
+const express = require("express");
+const router = express.Router();
+const { myDataSource } = require("../../db");
+const { Product } = require("../entity/product.entity");
+const writeToCsvStream = require("../services/writeToCsv.service");
 
 let dataSourceInitialised = false;
 function initDataSources() {
@@ -15,9 +17,9 @@ function initDataSources() {
         });
 }
 
-exports.getProducts = async (req, res) => {
-
+async function getProducts(req, res) {
     if (!dataSourceInitialised) await initDataSources();
+
     try {
         const products = await myDataSource.getRepository(Product).find()
         res.json(products)
@@ -28,8 +30,7 @@ exports.getProducts = async (req, res) => {
 
 };
 
-exports.postProductsToDb = async (req, res) => {
-
+async function postProductsToDb(req, res) {
     if (!dataSourceInitialised) await initDataSources();
 
     try {
@@ -48,6 +49,43 @@ exports.postProductsToDb = async (req, res) => {
         console.log('error saving to DB:', err)
     }
 };
+
+async function writeDataToCsv(req, res) {
+    if (!dataSourceInitialised) await initDataSources();
+
+    res.setHeader('Content-disposition', 'attachment; filename=result.csv');
+    res.setHeader('Content-type', 'text/csv');
+
+    const stream = await writeToCsvStream(myDataSource, Product, req.query)
+
+    stream
+        .pipe(res)
+
+    stream
+        .on('data', (data) => {
+            console.log('data', data);
+        })
+        .on('error', (error) => {
+            console.error('Failed to retrieve data :', error)
+            res.send(error);
+        })
+        .on('end', () => {
+            console.log('end');
+            res.status(200).end();
+        })
+}
+
+
+router.get("/", getProducts);
+
+router.post("/", postProductsToDb);
+
+router.get("/write", writeDataToCsv);
+
+module.exports = router;
+
+
+
 
 
 // ADD ITEMS

@@ -1,4 +1,4 @@
-function getDbQuery(req) {
+function getDbQuery(query) {
     let dbQuery = "";
     const dbQueryObject = {};
 
@@ -13,7 +13,7 @@ function getDbQuery(req) {
         return {signStr, numberStr}
     }
 
-    Object.entries(req.query).map(([key, value], index) => {
+    Object.entries(query).map(([key, value], index) => {
         dbQuery += index === 0 ? `` : ` AND `;
 
         if (key === 'price') {
